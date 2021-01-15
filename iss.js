@@ -30,5 +30,39 @@ const fetchMyIP = function(callback) {
 };
 
 
+//take in IP address return latitude and longitude
+//https://freegeoip.app/json/
+//In the function, make the request to the API
+//and have it pass back the relevant (lat/lng) data as an object via callback.
+const fetchCoordsByIP = function(ip, callback) { //we really dont need an ip here
+  request(`https://freegeoip.app/json/${ip}`, (error, response, body) => {
+    // console.log('error:', error); // Print the error if one occurred
+    // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    // console.log('body:', body); // Print the HTML for the Google homepage.
 
-module.exports = { fetchMyIP };
+    if (error) { //this condition works
+      return callback(error, null);
+    }
+
+    if (response.statusCode !== 200) {
+      callback(Error(`Status Code ${response.statusCode} when fetching Coordinates for IP. Response: ${body}`), null);
+      return;
+    }
+
+    // const { latitude, longitude } = JSON.parse(body);
+
+    // callback(null, { latitude, longitude });
+    console.log(JSON.parse(body));
+    callback(null, {
+      latitude: JSON.parse(body).latitude,
+      longitude: JSON.parse(body).longitude
+    });
+
+  });
+};
+
+
+module.exports = {
+  fetchMyIP,
+  fetchCoordsByIP
+};
